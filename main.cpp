@@ -1,4 +1,5 @@
 #include "SocketClient.h"
+#include "SerialPort.h"
 #include "mmaker.h"
 #include <iostream>
 
@@ -29,12 +30,29 @@ int sendFrame() {
     return 0;
 }
 
+int sendSerial(){
+    SerialPort serial("/dev/ttyUSB0", B9600); // Adjust the port and baud rate as needed
+
+    if (!serial.openPort()) {
+        std::cerr << "Failed to open port" << std::endl;
+        return 1;
+    }
+
+    std::string data = "Siema Arduino!";
+    if (!serial.sendData(data)) {
+        std::cerr << "Failed to send data" << std::endl;
+    }
+
+    serial.closePort();
+    return 0;
+}
+
 int main() {
         menu obj;
     int x;
     obj.menu_head("App Menu");
-    obj.add("Send a Frame to localhost");
-    obj.add("Send a Frame to static IP");
+    obj.add("Send a Frame to Network Device");
+    obj.add("Send a Frame to Serial Port Device");
     obj.add("Exit");
     while(true)
     {
@@ -45,6 +63,7 @@ int main() {
                 sendFrame();
                 break;
             case 2:
+                sendSerial();
                 break;
             case 3:
                 cout << "BAY BAY\n";
